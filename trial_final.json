@@ -1,0 +1,296 @@
+[
+  {
+    "id": "debezium_debezium-26-FirstSentence-0",
+    "old_comment_raw": "Obtain an editor for the identified table or, if there is no such table, create an editor with the specified ID.",
+    "new_comment_raw": "Obtain an editor for the table with the given ID.",
+    "old_code_raw": "    public TableEditor editOrCreateTable(String catalogName, String schemaName, String tableName) {\n        return editOrCreateTable(new TableId(catalogName, schemaName, tableName));\n    }\n",
+    "new_code_raw": "    public TableEditor editOrCreateTable(TableId tableId) {\n        Table table = forTable(tableId);\n        return table == null ? Table.editor().tableId(tableId) : table.edit();\n    }\n"
+  },
+  {
+    "id": "debezium_debezium-1300-FirstSentence-0",
+    "old_comment_raw": "Get the number of nanoseconds past midnight of the given  java.time.LocalDateTime,  java.time.LocalDate,  java.time.LocalTime,  java.util.Date,  java.sql.Date,  java.sql.Time, or  java.sql.Timestamp, ignoring any date portions of the supplied value.",
+    "new_comment_raw": "Get the number of nanoseconds past midnight of the given  Duration.",
+    "old_code_raw": "    public static long toNanoOfDay(Object value, TemporalAdjuster adjuster) {\n        LocalTime time = Conversions.toLocalTime(value);\n        if (adjuster !=null) {\n            time = time.with(adjuster);\n        }\n        return time.toNanoOfDay();\n    }\n",
+    "new_code_raw": "    public static long toNanoOfDay(Object value, boolean acceptLargeValues) {\n        if (value instanceof Duration) {\n            Duration duration = (Duration) value;\n            if (!acceptLargeValues && (duration.isNegative() || duration.compareTo(ONE_DAY) > 0)) {\n                throw new IllegalArgumentException(\"Time values must be between 00:00:00 and 24:00:00 (inclusive): \" + duration);\n            }\n\n            return ((Duration) value).toNanos();\n        }\n\n        // TODO only needed for SQL Server/Oracle, where we don't produce Duration right away;\n        // this should go eventually, as the conversion to LocalTime is superfluous\n        LocalTime time = Conversions.toLocalTime(value);\n        return time.toNanoOfDay();\n    }\n"
+  },
+  {
+    "id": "querydsl_querydsl-1434-FirstSentence-0",
+    "old_comment_raw": "Expr : left.endsWith(right) (ignore case)",
+    "new_comment_raw": "Expr : left.endsWith(right)",
+    "old_code_raw": "    public static EBoolean endsWith(Expr<String> left, Expr<String> right, boolean caseSensitive) {\n        if (caseSensitive){\n            return endsWith(left, right);            \n        }else{\n            return operationFactory.createBoolean(Ops.ENDSWITH_IC, left, right);\n        }\n    }\n",
+    "new_code_raw": "    public static EBoolean endsWith(Expr<String> left, Expr<String> right) {\n        return operationFactory.createBoolean(Ops.ENDSWITH, left, right);\n    }\n"
+  },
+  {
+    "id": "apache_roller-156-Associations-FirstSentence",
+    "old_comment_raw": "Accessor to the Roller Weblogger business tier.",
+    "new_comment_raw": "Accessor to the Weblogger Weblogger business tier.",
+    "old_code_raw": "    public static final Roller getRoller() {\n        if (rollerInstance == null) {\n            throw new IllegalStateException(\"Roller Weblogger has not been bootstrapped yet\");\n        }\n        \n        return rollerInstance;\n    }\n",
+    "new_code_raw": "    public static final Weblogger getRoller() {\n        if (rollerInstance == null) {\n            throw new IllegalStateException(\"Roller Weblogger has not been bootstrapped yet\");\n        }\n        \n        return rollerInstance;\n    }\n\n"
+  },
+  {
+    "id": "apache_axis1-java-145-Associations-FirstSentence",
+    "old_comment_raw": "Return XML schema for the specified type, suitable for insertion into the  element of a WSDL document.",
+    "new_comment_raw": "Return XML schema for the specified type, suitable for insertion into the &lt;types&gt; element of a WSDL document, or underneath an &lt;element&gt; or &lt;attribute&gt; declaration.",
+    "old_code_raw": "    public boolean writeSchema(Types types) throws Exception {\n        return false;\n    }\n",
+    "new_code_raw": "    public Element writeSchema(Class javaType, Types types) throws Exception {\n        // If an array the component type should be processed first\n        String componentTypeName = null;\n        Class componentType = null;\n        if (javaType.isArray()) {\n            String dimString = \"[]\";\n            componentType = javaType.getComponentType();\n            if (componentType.isArray()) {\n                while (componentType.isArray()) {\n                    dimString += \"[]\";\n                    componentType = componentType.getComponentType();\n                }\n            }\n            componentTypeName =\n                    types.getQNameString(types.getTypeQName(componentType)) +\n                    dimString;\n        }\n\n        // Use Types helper method to actually create the complexType\n        return types.createArrayElement(componentTypeName);\n    }\n\n"
+  },
+  {
+    "id": "apache_jsecurity-33-Associations-FirstSentence",
+    "old_comment_raw": "Returns the time in seconds the specified session may remain idle before expiring.",
+    "new_comment_raw": "Subclass template hook in case per-session timeout is not based on  org.jsecurity.session.Session#getTimeout().",
+    "old_code_raw": "    protected int getTimeout( Session session ) {\n        return getGlobalSessionTimeout();\n    }\n",
+    "new_code_raw": "    protected long getTimeout( Session session ) {\n        return session.getTimeout();\n    }\n\n"
+  },
+  {
+    "id": "davidB_metrics-influxdb-1-Associations-FirstSentence",
+    "old_comment_raw": "Builds a  InfluxdbReporter with the given properties, sending metrics using the given  Influxdb client.",
+    "new_comment_raw": "Builds a  ScheduledReporter with the given properties, sending metrics using the given InfluxDB.",
+    "old_code_raw": "\t\tpublic ScheduledReporter build(Influxdb influxdb) {\n\t\t\treturn executor == null\n\t\t\t\t\t? new ReporterV08(registry, influxdb, clock, prefix, rateUnit, durationUnit, filter, skipIdleMetrics)\n\t\t\t\t\t: new ReporterV08(registry, influxdb, clock, prefix, rateUnit, durationUnit, filter, skipIdleMetrics, executor)\n\t\t\t\t\t;\n\t\t}\n",
+    "new_code_raw": "\t\tpublic ScheduledReporter build() {\n\t\t\tScheduledReporter reporter;\n\n\t\t\tswitch (influxdbVersion) {\n\t\t\tcase V08:\n\t\t\t\tInfluxdb influxdb = buildInfluxdb();\n\t\t\t\treporter = (executor == null)\n\t\t\t\t\t\t? new ReporterV08(registry, influxdb, clock, prefix, rateUnit, durationUnit, filter, skipIdleMetrics)\n\t\t\t\t\t\t: new ReporterV08(registry, influxdb, clock, prefix, rateUnit, durationUnit, filter, skipIdleMetrics, executor)\n\t\t\t\t\t\t;\n\t\t\t\tbreak;\n\t\t\tdefault:\n\t\t\t\tSender s = buildSender();\n\t\t\t\treporter = executor == null\n\t\t\t\t\t\t? new MeasurementReporter(s, registry, filter, rateUnit, durationUnit, clock, tags, transformer)\n\t\t\t\t\t\t: new MeasurementReporter(s, registry, filter, rateUnit, durationUnit, clock, tags, transformer, executor)\n\t\t\t\t\t\t;\n\t\t\t}\n\t\t\treturn reporter;\n\t\t}\n\n"
+  },
+  {
+    "id": "hibernate_hibernate_orm-1973-FirstSentence-0",
+    "old_comment_raw": "Get a batch of unloaded identifiers for this class, using a slightly complex algorithm that tries to grab keys registered immediately after the given key.",
+    "new_comment_raw": "Get a batch of uninitialized collection keys for a given role",
+    "old_code_raw": "\tprivate boolean isCached(EntityKey entityKey, EntityPersister persister) {\n\t\tif ( persister.hasCache() ) {\n\t\t\tCacheKey key = context.getSession().generateCacheKey(\n\t\t\t\t\tentityKey.getIdentifier(),\n\t\t\t\t\tpersister.getIdentifierType(),\n\t\t\t\t\tentityKey.getEntityName()\n\t\t\t);\n\t\t\treturn persister.getCacheAccessStrategy().get( key, context.getSession().getTimestamp() ) != null;\n\t\t}\n\t\treturn false;\n\t}\n",
+    "new_code_raw": "\tprivate boolean isCached(Serializable collectionKey, CollectionPersister persister) {\n\t\tif ( persister.hasCache() ) {\n\t\t\tCacheKey cacheKey = context.getSession().generateCacheKey(\n\t\t\t\t\tcollectionKey,\n\t\t\t        persister.getKeyType(),\n\t\t\t        persister.getRole()\n\t\t\t);\n\t\t\treturn persister.getCacheAccessStrategy().get( cacheKey, context.getSession().getTimestamp() ) != null;\n\t\t}\n\t\treturn false;\n\t}\n"
+  },
+  {
+    "id": "apache_giraph-77-Associations-FirstSentence",
+    "old_comment_raw": "Creates a new  com.yammer.metrics.core.Timer and registers it under the given group and name, measuring elapsed time in milliseconds and invocations per second.",
+    "new_comment_raw": "Create a new  Timer from the description and registers it under the given group and name.",
+    "old_code_raw": "  public Timer getTimer(String name) {\n    return getTimer(name, TimeUnit.MILLISECONDS, TimeUnit.SECONDS);\n  }\n",
+    "new_code_raw": "  public Timer getTimer(TimerDesc timerDesc) {\n    return getTimer(timerDesc.getName(), timerDesc.getDurationUnit(),\n        timerDesc.getTimeUnit());\n  }\n\n"
+  },
+  {
+    "id": "apache_derby-12-Associations-FirstSentence",
+    "old_comment_raw": "Get the name of the table this column comes from.",
+    "new_comment_raw": "Get the name of the underlying(base) table this column comes from, if any.",
+    "old_code_raw": "\n\tpublic String getSourceTableName()\n\t{\n\t\treturn ( ( tableName != null) ? tableName.getTableName() : \n\t\t\t\t\t((source != null) ? source.getTableName() : null));\n\t}\n",
+    "new_code_raw": "\n\tpublic String getSourceTableName()\n\t{\n\t\treturn ((source != null) ? source.getTableName() : null);\n\t}\n\n"
+  },
+  {
+    "id": "udayinfy_owasp-esapi-java-45-Associations-FirstSentence",
+    "old_comment_raw": "Union two character arrays.",
+    "new_comment_raw": "Union multiple character arrays.",
+    "old_code_raw": "    public static char[] union(char[] c1, char[] c2) {\r\n    \tStringBuilder sb = new StringBuilder();\r\n        for (int i = 0; i < c1.length; i++) {\r\n            if (!contains(sb, c1[i]))\r\n                sb.append(c1[i]);\r\n        }\r\n        for (int i = 0; i < c2.length; i++) {\r\n            if (!contains(sb, c2[i]))\r\n                sb.append(c2[i]);\r\n        }\r\n        char[] c3 = new char[sb.length()];\r\n        sb.getChars(0, sb.length(), c3, 0);\r\n        Arrays.sort(c3);\r\n        return c3;\r\n    }\r\n",
+    "new_code_raw": "    public static char[] union(char[]... list) {\r\n    \tStringBuilder sb = new StringBuilder();\r\n    \t\r\n    \tfor (char[] characters : list) {\r\n\t        for (int i = 0; i < list.length; i++) {\r\n\t            if (!contains(sb, characters[i]))\r\n\t                sb.append(list[i]);\r\n\t        }\r\n    \t}\r\n\r\n        char[] toReturn = new char[sb.length()];\r\n        sb.getChars(0, sb.length(), toReturn, 0);\r\n        Arrays.sort(toReturn);\r\n        return toReturn;\r\n    }\r\n\n"
+  },
+  {
+    "id": "stanfordnlp_CoreNLP-2428-FirstSentence-0",
+    "old_comment_raw": "Select the most common element of the given type in the given span.",
+    "new_comment_raw": "Find the dependency path between two words in a sentence.",
+    "old_code_raw": "  public List<String> dependencyPathBetween(int start, int end, Function<Sentence, List<String>> selector) {\n    // Get paths from a node to the root of the sentence\n    LinkedList<Integer> rootToStart = new LinkedList<>();\n    LinkedList<Integer> rootToEnd = new LinkedList<>();\n    int startAncestor = start;\n    List<Optional<Integer>> governors = sentence.governors();\n    Set<Integer> seenVertices = new HashSet<>();\n    while (startAncestor >= 0 && governors.get(startAncestor).isPresent()) {\n      if (seenVertices.contains(startAncestor)) {\n        return Collections.EMPTY_LIST;\n      }\n      seenVertices.add(startAncestor);\n      rootToStart.addFirst(startAncestor);\n      startAncestor = governors.get(startAncestor).get();\n    }\n    if (startAncestor == -1) {\n      rootToStart.addFirst(-1);\n    }\n    int endAncestor = end;\n    seenVertices.clear();\n    while (endAncestor >= 0 && governors.get(endAncestor).isPresent()) {\n      if (seenVertices.contains(endAncestor)) {\n        return Collections.EMPTY_LIST;\n      }\n      seenVertices.add(endAncestor);\n      rootToEnd.addFirst(endAncestor);\n      endAncestor = governors.get(endAncestor).get();\n    }\n    if (endAncestor == -1) {\n      rootToEnd.addFirst(-1);\n    }\n\n    // Get least common node\n    int leastCommonNodeIndex = (rootToStart.size() == 0 || rootToEnd.size() == 0 || !rootToStart.get(0).equals(rootToEnd.get(0))) ? -1 : 0;\n    for (int i = 1; i < Math.min(rootToStart.size(), rootToEnd.size()); ++i) {\n      if (rootToStart.get(i).equals(rootToEnd.get(i))) {\n        leastCommonNodeIndex = i;\n      }\n    }\n\n    // Construct the path\n    if (leastCommonNodeIndex < 0) {\n      return Collections.EMPTY_LIST;\n    }\n    List<String> path = new ArrayList<>();\n    for (int i = rootToStart.size() - 1; i > leastCommonNodeIndex; --i) {\n      path.add(selector.apply(sentence).get(rootToStart.get(i)));\n      path.add(\"<-\" + sentence.incomingDependencyLabel(rootToStart.get(i)).orElse(\"dep\") + \"-\");\n    }\n    path.add(selector.apply(sentence).get(rootToStart.get(leastCommonNodeIndex)));\n    for (int i = leastCommonNodeIndex + 1; i < rootToEnd.size(); ++i) {\n      path.add(\"-\" + sentence.incomingDependencyLabel(rootToEnd.get(i)).orElse(\"dep\") + \"->\");\n      path.add(selector.apply(sentence).get(rootToEnd.get(i)));\n    }\n    return path;\n  }\n",
+    "new_code_raw": "  public List<String> dependencyPathBetween(int start, int end, Optional<Function<Sentence, List<String>>> selector) {\n    // Get paths from a node to the root of the sentence\n    LinkedList<Integer> rootToStart = new LinkedList<>();\n    LinkedList<Integer> rootToEnd = new LinkedList<>();\n    int startAncestor = start;\n    List<Optional<Integer>> governors = sentence.governors();\n    Set<Integer> seenVertices = new HashSet<>();\n    while (startAncestor >= 0 && governors.get(startAncestor).isPresent()) {\n      if (seenVertices.contains(startAncestor)) {\n        // Found loopiness -- revert to BFS\n        return loopyDependencyPathBetween(start, end, selector);\n      }\n      seenVertices.add(startAncestor);\n      rootToStart.addFirst(startAncestor);\n      startAncestor = governors.get(startAncestor).get();\n    }\n    if (startAncestor == -1) {\n      rootToStart.addFirst(-1);\n    }\n    int endAncestor = end;\n    seenVertices.clear();\n    while (endAncestor >= 0 && governors.get(endAncestor).isPresent()) {\n      if (seenVertices.contains(endAncestor)) {\n        // Found loopiness -- revert to BFS\n        return loopyDependencyPathBetween(start, end, selector);\n      }\n      seenVertices.add(endAncestor);\n      rootToEnd.addFirst(endAncestor);\n      endAncestor = governors.get(endAncestor).get();\n    }\n    if (endAncestor == -1) {\n      rootToEnd.addFirst(-1);\n    }\n\n    // Get least common node\n    int leastCommonNodeIndex = (rootToStart.size() == 0 || rootToEnd.size() == 0 || !rootToStart.get(0).equals(rootToEnd.get(0))) ? -1 : 0;\n    for (int i = 1; i < Math.min(rootToStart.size(), rootToEnd.size()); ++i) {\n      if (rootToStart.get(i).equals(rootToEnd.get(i))) {\n        leastCommonNodeIndex = i;\n      }\n    }\n\n    // Construct the path\n    if (leastCommonNodeIndex < 0) {\n      return Collections.emptyList();\n    }\n    List<String> path = new ArrayList<>();\n    Optional<List<String>> words = selector.map(x -> x.apply(sentence));\n    for (int i = rootToStart.size() - 1; i > leastCommonNodeIndex; --i) {\n      final int index = i;\n      words.ifPresent(x -> path.add(x.get(rootToStart.get(index))));\n      path.add(\"<-\" + sentence.incomingDependencyLabel(rootToStart.get(i)).orElse(\"dep\") + \"-\");\n    }\n    if (words.isPresent()) {\n      path.add(words.get().get(rootToStart.get(leastCommonNodeIndex)));\n    }\n    for (int i = leastCommonNodeIndex + 1; i < rootToEnd.size(); ++i) {\n      final int index = i;\n      path.add(\"-\" + sentence.incomingDependencyLabel(rootToEnd.get(i)).orElse(\"dep\") + \"->\");\n      words.ifPresent(x -> path.add(x.get(rootToEnd.get(index))));\n    }\n    return path;\n  }\n"
+  },
+  {
+    "id": "macalinao_albkit-15-Associations-FirstSentence",
+    "old_comment_raw": "Gets the material whose name is the same as the raw arg (ignores case)",
+    "new_comment_raw": "Gets the material whose name is the same as the raw value (ignores case)",
+    "old_code_raw": "    public Material asMaterialFromName() {\n        return Material.getMaterial(arg.toUpperCase());\n    }\n",
+    "new_code_raw": "    public Material asMaterialFromName() {\n        return Material.getMaterial(raw.toUpperCase());\n    }\n\n"
+  },
+  {
+    "id": "macalinao_albkit-16-Associations-FirstSentence",
+    "old_comment_raw": "Checks whether this ChatSection's argument can be parsed as a boolean",
+    "new_comment_raw": "Checks whether this ChatSection's value can be parsed as a boolean",
+    "old_code_raw": "    public boolean isBoolean() {\n        return arg.equals(\"true\") || arg.equals(\"false\");\n    }\n",
+    "new_code_raw": "    public boolean isBoolean() {\n        return raw.equals(\"true\") || raw.equals(\"false\");\n    }\n\n"
+  },
+  {
+    "id": "eclipse_rt.equinox.bundles-53-Associations-FirstSentence",
+    "old_comment_raw": "Remove directional formatting characters in the given string that were inserted by one of the  #process process methods.",
+    "new_comment_raw": "Removes directional formatting characters in the given string.",
+    "old_code_raw": "\tpublic static String deprocess(String str) {\n\t\tif ((str == null) || (str.length() <= 1) || !isProcessingNeeded())\n\t\t\treturn str;\n\n\t\tStringBuffer buf = new StringBuffer();\n\t\tint strLen = str.length();\n\t\tfor (int i = 0; i < strLen; i++) {\n\t\t\tchar c = str.charAt(i);\n\t\t\tswitch (c) {\n\t\t\t\tcase LRM :\n\t\t\t\t\tcontinue;\n\t\t\t\tcase LRE :\n\t\t\t\t\tcontinue;\n\t\t\t\tcase PDF :\n\t\t\t\t\tcontinue;\n\t\t\t\tdefault :\n\t\t\t\t\tbuf.append(c);\n\t\t\t}\n\t\t}\n\t\treturn buf.toString();\n\t}\n",
+    "new_code_raw": "\tpublic static String deprocess(String str) {\n\t\tif ((str == null) || (str.length() <= 1))\n\t\t\treturn str;\n\t\tSTextEnvironment env = new STextEnvironment(null, false, STextEnvironment.ORIENT_UNKNOWN);\n\t\tif (!env.isProcessingNeeded())\n\t\t\treturn str;\n\n\t\tStringBuffer buf = new StringBuffer();\n\t\tint strLen = str.length();\n\t\tfor (int i = 0; i < strLen; i++) {\n\t\t\tchar c = str.charAt(i);\n\t\t\tswitch (c) {\n\t\t\t\tcase LRM :\n\t\t\t\t\tcontinue;\n\t\t\t\tcase LRE :\n\t\t\t\t\tcontinue;\n\t\t\t\tcase PDF :\n\t\t\t\t\tcontinue;\n\t\t\t\tdefault :\n\t\t\t\t\tbuf.append(c);\n\t\t\t}\n\t\t}\n\t\treturn buf.toString();\n\t}\n\n"
+  },
+  {
+    "id": "idega_is.idega.idegaweb.marathon-0-Associations-FirstSentence",
+    "old_comment_raw": "Gets a Map of distances for a specific run and year.",
+    "new_comment_raw": "Gets a Collection of distances for a specific run and year.",
+    "old_code_raw": "\tpublic Map getDistancesMap(Group run, String year) {\n\t\tIWContext iwc = IWContext.getInstance();\n\t\tMap disMap = new LinkedHashMap();\n\t\tCollection distances = null;\n\t\tCollection type = new ArrayList();\n\t\ttype.add(IWMarathonConstants.GROUP_TYPE_RUN_DISTANCE);\n\t\tIterator yearsIter = getYears(run).iterator();\n\t\twhile (yearsIter.hasNext()) {\n\t\t\tGroup y = (Group) yearsIter.next();\n\t\t\tif (y.getName().equals(year)) {\n\t\t\t\ttry {\n\t\t\t\t\tdistances = getGroupBiz(iwc).getChildGroupsRecursiveResultFiltered(y, type, true);\n\t\t\t\t}\n\t\t\t\tcatch (Exception e) {\n\t\t\t\t\tdistances = null;\n\t\t\t\t}\n\t\t\t}\n\t\t\telse {\n\t\t\t\tdistances = null;\n\t\t\t}\n\t\t}\n\t\tif (distances != null) {\n\t\t\tIterator disIter = distances.iterator();\n\t\t\twhile (disIter.hasNext()) {\n\t\t\t\tGroup dis = (Group) disIter.next();\n\t\t\t\tdisMap.put(dis.getPrimaryKey().toString(), dis.getName());\n\t\t\t}\n\t\t}\n\t\treturn disMap;\n\t}\n",
+    "new_code_raw": "\tpublic Collection getDistancesMap(Group run, String year) {\n\t\tIWContext iwc = IWContext.getInstance();\n\t\tMap disMap = new LinkedHashMap();\n\t\tCollection distances = null;\n\t\tCollection type = new ArrayList();\n\t\ttype.add(IWMarathonConstants.GROUP_TYPE_RUN_DISTANCE);\n\t\tIterator yearsIter = getYears(run).iterator();\n\t\twhile (yearsIter.hasNext()) {\n\t\t\tGroup y = (Group) yearsIter.next();\n\t\t\tif (y.getName().equals(year)) {\n\t\t\t\ttry {\n\t\t\t\t\tdistances = getGroupBiz(iwc).getChildGroupsRecursiveResultFiltered(y, type, true);\n\t\t\t\t}\n\t\t\t\tcatch (Exception e) {\n\t\t\t\t\tdistances = null;\n\t\t\t\t}\n\t\t\t}\n\t\t}\n\t\treturn distances;\n\t}\n\n"
+  },
+  {
+    "id": "wdullaer_MaterialDateTimePicker-40-FirstSentence-0",
+    "old_comment_raw": "Get the currently-entered time, as integer values of the hours and minutes typed.",
+    "new_comment_raw": "Get the currently-entered time, as integer values of the hours, minutes and seconds typed.",
+    "old_code_raw": "    private int[] getEnteredTime(Boolean[] enteredZeros) {\n        int amOrPm = -1;\n        int startIndex = 1;\n        if (!mIs24HourMode && isTypedTimeFullyLegal()) {\n            int keyCode = mTypedTimes.get(mTypedTimes.size() - 1);\n            if (keyCode == getAmOrPmKeyCode(AM)) {\n                amOrPm = AM;\n            } else if (keyCode == getAmOrPmKeyCode(PM)){\n                amOrPm = PM;\n            }\n            startIndex = 2;\n        }\n        int minute = -1;\n        int hour = -1;\n        for (int i = startIndex; i <= mTypedTimes.size(); i++) {\n            int val = getValFromKeyCode(mTypedTimes.get(mTypedTimes.size() - i));\n            if (i == startIndex) {\n                minute = val;\n            } else if (i == startIndex+1) {\n                minute += 10*val;\n                if (enteredZeros != null && val == 0) {\n                    enteredZeros[1] = true;\n                }\n            } else if (i == startIndex+2) {\n                hour = val;\n            } else if (i == startIndex+3) {\n                hour += 10*val;\n                if (enteredZeros != null && val == 0) {\n                    enteredZeros[0] = true;\n                }\n            }\n        }\n\n        return new int[] {hour, minute, amOrPm};\n    }\n",
+    "new_code_raw": "    private int[] getEnteredTime(Boolean[] enteredZeros) {\n        int amOrPm = -1;\n        int startIndex = 1;\n        if (!mIs24HourMode && isTypedTimeFullyLegal()) {\n            int keyCode = mTypedTimes.get(mTypedTimes.size() - 1);\n            if (keyCode == getAmOrPmKeyCode(AM)) {\n                amOrPm = AM;\n            } else if (keyCode == getAmOrPmKeyCode(PM)){\n                amOrPm = PM;\n            }\n            startIndex = 2;\n        }\n        int minute = -1;\n        int hour = -1;\n        int second = 0;\n        int shift = mEnableSeconds ? 2 : 0;\n        for (int i = startIndex; i <= mTypedTimes.size(); i++) {\n            int val = getValFromKeyCode(mTypedTimes.get(mTypedTimes.size() - i));\n            if (mEnableSeconds) {\n                if (i == startIndex) {\n                    second = val;\n                } else if (i == startIndex + 1) {\n                    second += 10*val;\n                    if (enteredZeros != null && val == 0) {\n                        enteredZeros[2] = true;\n                    }\n                }\n            }\n            if (i == startIndex + shift) {\n                minute = val;\n            } else if (i == startIndex + shift + 1) {\n                minute += 10*val;\n                if (enteredZeros != null && val == 0) {\n                    enteredZeros[1] = true;\n                }\n            } else if (i == startIndex + shift + 2) {\n                hour = val;\n            } else if (i == startIndex + shift + 3) {\n                hour += 10*val;\n                if (enteredZeros != null && val == 0) {\n                    enteredZeros[0] = true;\n                }\n            }\n        }\n\n        return new int[] {hour, minute, second, amOrPm};\n    }\n"
+  },
+  {
+    "id": "nickman_HeliosStreams-32-Associations-FirstSentence",
+    "old_comment_raw": "Resets the count to zero",
+    "new_comment_raw": "Resets the count to zero and sets the time window according to the passed ms timestamp",
+    "old_code_raw": "\tpublic long reset() {\n\t\tfinal long priorCount = count;\n\t\tcount = 0;\n\t\treturn priorCount;\n\t}\n",
+    "new_code_raw": "\tpublic NVP<Long, Double> reset(final long newStartMs, final long newCount) {\n\t\tfinal long[] priorWindow = TIME_WINDOW_UPDATER.getAndSet(this, windowRangeFromMs(newStartMs, windowWidth));\n\t\tfinal long priorCount = count;\n\t\tcount = newCount;\n\t\treturn new NVP<Long, Double>(priorWindow[1], calcRate(priorCount, windowWidth));\n\t}\n\n"
+  },
+  {
+    "id": "ushahidi_Ushahidi_Java-10-Associations-FirstSentence",
+    "old_comment_raw": "Create report task object",
+    "new_comment_raw": "Create incidents task object",
+    "old_code_raw": "\tpublic ReportsTask createReportsTask() {\n\t\treturn new ReportsTask(url);\n\t}\n",
+    "new_code_raw": "\tpublic IncidentsTask createReportsTask() {\n\t\treturn new IncidentsTask(url);\n\t}\n\n"
+  },
+  {
+    "id": "rstudio_rstudio-130-FirstSentence-0",
+    "old_comment_raw": "Index of terminal to show after closing indicated terminal index",
+    "new_comment_raw": "Handle of terminal to show after closing indicated terminal.",
+    "old_code_raw": "   private int terminalToShowWhenClosing(int terminalClosing)\n   {\n      if (terminalClosing > 0)\n         return terminalClosing - 1;\n      else if (terminalClosing + 1 < getTerminalCount())\n         return terminalClosing + 1;\n      else\n         return -1;\n   }\n",
+    "new_code_raw": "   private String terminalToShowWhenClosing(String handle)\n   {\n      int terminalClosing = terminals_.indexOfTerminal(handle);\n      if (terminalClosing > 0)\n         return terminals_.terminalHandleAtIndex(terminalClosing - 1);\n      else if (terminalClosing + 1 < terminals_.terminalCount())\n         return terminals_.terminalHandleAtIndex(terminalClosing + 1);\n      else\n         return null;\n   }\n"
+  },
+  {
+    "id": "trygvis_jop-160-Associations-FirstSentence",
+    "old_comment_raw": "Parse a signature, with or without classname, with or without descriptor.",
+    "new_comment_raw": "Parse a member ID, with or without classname, with or without descriptor.",
+    "old_code_raw": "    public static String getClassName(String signature, boolean isClassMember) {\n        int pos = signature.indexOf(ALT_MEMBER_SEPARATOR);\n        // uses alternative separator, easy\n        if (pos != -1) return signature.substring(0, pos);\n\n        pos = signature.indexOf('(');\n        if ( pos != -1 ) {\n            // has a descriptor, is a method signature, strip last member part\n            pos = signature.lastIndexOf('.', pos);\n            return pos != -1 ? signature.substring(0, pos) : \"\";\n        }\n\n        if (isClassMember) {\n            // field or class name, cannot decide, assume it is a field\n            pos = signature.lastIndexOf('.');\n            return pos != -1 ? signature.substring(0, pos) : \"\";\n        } else {\n            // assume it is a class name\n            return signature;\n        }\n    }\n",
+    "new_code_raw": "    public static String getClassName(String memberID, boolean isClassMember) {\n        int pos = memberID.indexOf(ALT_MEMBER_SEPARATOR);\n        // uses alternative separator, easy\n        if (pos != -1) return memberID.substring(0, pos);\n\n        pos = memberID.indexOf('(');\n        if ( pos != -1 ) {\n            // has a descriptor, is a method ID, strip last member part\n            pos = memberID.lastIndexOf('.', pos);\n            return pos != -1 ? memberID.substring(0, pos) : \"\";\n        }\n\n        if (isClassMember) {\n            // field or class name, cannot decide, assume it is a field\n            pos = memberID.lastIndexOf('.');\n            return pos != -1 ? memberID.substring(0, pos) : \"\";\n        } else {\n            // assume it is a class name\n            return memberID;\n        }\n    }\n\n"
+  },
+  {
+    "id": "stanfordnlp_CoreNLP-2359-FirstSentence-0",
+    "old_comment_raw": "Given a  Tree node  t, attempts to return a list of nodes to which node  t has this grammatical relation, with  t as the governor.",
+    "new_comment_raw": "Given a Tree node t, attempts to return a list of nodes to which node t has this grammatical relation.",
+    "old_code_raw": "  public Collection<TreeGraphNode> getRelatedNodes(TreeGraphNode t, TreeGraphNode root, HeadFinder headFinder) {\n    Set<TreeGraphNode> nodeList = new ArraySet<TreeGraphNode>();\n    for (TregexPattern p : targetPatterns) {    // cdm: I deleted: && nodeList.isEmpty()\n      // Initialize the TregexMatcher with the HeadFinder so that we\n      // can use the same HeadFinder through the entire process of\n      // building the dependencies\n      TregexMatcher m = p.matcher(root, headFinder);\n      while (m.findAt(t)) {\n        TreeGraphNode target = (TreeGraphNode) m.getNode(\"target\");\n        if (target == null) {\n          throw new AssertionError(\"Expression has no target: \" + p);\n        }\n        nodeList.add(target);\n        if (DEBUG) {\n          System.err.println(\"found \" + this + \"(\" + t + \"-\" + t.headWordNode() + \", \" + m.getNode(\"target\") + \"-\" + ((TreeGraphNode) m.getNode(\"target\")).headWordNode() + \") using pattern \" + p);\n          for (String nodeName : m.getNodeNames()) {\n            if (nodeName.equals(\"target\"))\n              continue;\n            System.err.println(\"  node \" + nodeName + \": \" + m.getNode(nodeName));\n          }\n        }\n      }\n    }\n    return nodeList;\n  }\n",
+    "new_code_raw": "  public Collection<Tree> getRelatedNodes(Tree t, Tree root) {\n    if (root.value() == null) {\n      root.setValue(\"ROOT\");  // todo: cdm: it doesn't seem like this line should be here\n    }\n    Set<Tree> nodeList = new LinkedHashSet<Tree>();\n    for (TregexPattern p : targetPatterns) {    // cdm: I deleted: && nodeList.isEmpty()\n      TregexMatcher m = p.matcher(root);\n      while (m.findAt(t)) {\n        nodeList.add(m.getNode(\"target\"));\n        //System.out.println(\"found \" + this + \"(\" + t + \", \" + m.getNode(\"target\") + \") using pattern \" + p);\n      }\n    }\n    return nodeList;\n  }\n"
+  },
+  {
+    "id": "OpenAPITools_openapi_generator-2599-FirstSentence-0",
+    "old_comment_raw": "If a Parameter contains a reference to an other Parameter with '$ref', returns the referenced Parameter or the actual Parameter in the other cases.",
+    "new_comment_raw": "If a Parameter contains a reference to an other Parameter with '$ref', returns the referenced Parameter if it is found or the actual Parameter in the other cases.",
+    "old_code_raw": "    public static Parameter getReferencedParameter(OpenAPI openAPI, Parameter parameter) {\n        if (parameter != null && StringUtils.isNotEmpty(parameter.get$ref())) {\n            String name = getSimpleRef(parameter.get$ref());\n            return getParameter(openAPI, name);\n        }\n        return parameter;\n    }\n",
+    "new_code_raw": "    public static Parameter getReferencedParameter(OpenAPI openAPI, Parameter parameter) {\n        if (parameter != null && StringUtils.isNotEmpty(parameter.get$ref())) {\n            String name = getSimpleRef(parameter.get$ref());\n            Parameter referencedParameter = getParameter(openAPI, name);\n            if(referencedParameter != null) {\n                return referencedParameter;\n            }\n        }\n        return parameter;\n    }\n"
+  },
+  {
+    "id": "yahoo_fili-1-Associations-FirstSentence",
+    "old_comment_raw": "Exports current thread's request log object as a JSON string without resetting it.",
+    "new_comment_raw": "Exports current thread's request log object as a formatted string without resetting it.",
+    "old_code_raw": "    public static String export() {\n        RequestLog current = RLOG.get();\n        record(new Durations(current.aggregateDurations()));\n        record(new Threads(current.threadIds));\n        try {\n            return current.mapper.writeValueAsString(current.info);\n        } catch (JsonProcessingException jpe) {\n            String msg = String.format(\"Exporting mega log line with id: '%s' to JSON failed.\", current.logId);\n            LOG.warn(msg, jpe);\n            return msg;\n        }\n    }\n",
+    "new_code_raw": "    public static String export() {\n        RequestLog current = RLOG.get();\n        record(new Durations(current.aggregateDurations()));\n        record(new Threads(current.threadIds));\n        return LogFormatterProvider.getInstance().format(current.info);\n    }\n\n"
+  },
+  {
+    "id": "graphql_java_graphql_java-450-FirstSentence-0",
+    "old_comment_raw": "Visits the Document in pre-order and allows to transform it using  graphql.language.AstTransformerUtil methods.",
+    "new_comment_raw": "Visits the Document in pre-order and allows to transform it using  graphql.util.TreeTransformerUtil methods.",
+    "old_code_raw": "    public Node transform(QueryVisitor queryVisitor) {\n        NodeVisitorImpl nodeVisitor = new NodeVisitorImpl(queryVisitor, new QueryVisitorStub());\n        Map<Class<?>, Object> rootVars = new LinkedHashMap<>();\n        rootVars.put(QueryTraversalContext.class, new QueryTraversalContext(rootParentType, rootParentType, null, null));\n\n        Node root = roots.stream().findFirst()\n                .orElseThrow(() -> new IllegalArgumentException(\"Single root node is required for transformation.\"));\n        return new AstTransformer().transform(root, nodeVisitor, rootVars);\n    }\n",
+    "new_code_raw": "    public Node transform(QueryVisitor queryVisitor) {\n        NodeVisitorImpl nodeVisitor = new NodeVisitorImpl(queryVisitor, new QueryVisitorStub());\n        Map<Class<?>, Object> rootVars = new LinkedHashMap<>();\n        rootVars.put(QueryTraversalContext.class, new QueryTraversalContext(rootParentType, rootParentType, null, null));\n\n        Node root = roots.stream().findFirst()\n                .orElseThrow(() -> new IllegalArgumentException(\"Single root node is required for transformation.\"));\n        TraverserVisitor<Node> nodeTraverserVisitor = new TraverserVisitor<Node>() {\n\n            @Override\n            public TraversalControl enter(TraverserContext<Node> context) {\n                context.setVar(LeaveOrEnter.class, LeaveOrEnter.ENTER);\n                return context.thisNode().accept(context, nodeVisitor);\n            }\n\n            @Override\n            public TraversalControl leave(TraverserContext<Node> context) {\n                context.setVar(LeaveOrEnter.class, LeaveOrEnter.LEAVE);\n                return  context.thisNode().accept(context, nodeVisitor);\n            }\n        };\n        return new TreeTransformer<>(AST_NODE_ADAPTER).transform(root, nodeTraverserVisitor, rootVars);\n    }\n"
+  },
+  {
+    "id": "OpenAPITools_openapi_generator-2533-FirstSentence-0",
+    "old_comment_raw": "Return the default value of the property",
+    "new_comment_raw": "Return the default value of the schema",
+    "old_code_raw": "    public String toDefaultValue(Property p) {\n        if (p instanceof StringProperty) {\n            StringProperty dp = (StringProperty) p;\n            if (dp.getDefault() != null) {\n                return \"@\\\"\" + dp.getDefault() + \"\\\"\";\n            }\n        } else if (p instanceof BooleanProperty) {\n            BooleanProperty dp = (BooleanProperty) p;\n            if (dp.getDefault() != null) {\n                if (dp.getDefault().toString().equalsIgnoreCase(\"false\"))\n                    return \"@(NO)\";\n                else\n                    return \"@(YES)\";\n            }\n        } else if (p instanceof DateProperty) {\n            // TODO\n        } else if (p instanceof DateTimeProperty) {\n            // TODO\n        } else if (p instanceof DoubleProperty) {\n            DoubleProperty dp = (DoubleProperty) p;\n            if (dp.getDefault() != null) {\n                return \"@\" + dp.getDefault().toString();\n            }\n        } else if (p instanceof FloatProperty) {\n            FloatProperty dp = (FloatProperty) p;\n            if (dp.getDefault() != null) {\n                return \"@\" + dp.getDefault().toString();\n            }\n        } else if (p instanceof IntegerProperty) {\n            IntegerProperty dp = (IntegerProperty) p;\n            if (dp.getDefault() != null) {\n                return \"@\" + dp.getDefault().toString();\n            }\n        } else if (p instanceof LongProperty) {\n            LongProperty dp = (LongProperty) p;\n            if (dp.getDefault() != null) {\n                return \"@\" + dp.getDefault().toString();\n            }\n        }\n\n        return null;\n    }\n",
+    "new_code_raw": "    public String toDefaultValue(Schema p) {\n        if (ModelUtils.isDateSchema(p)) {\n            // TODO\n        } else if (ModelUtils.isDateTimeSchema(p)) {\n            // TODO\n        } else if (ModelUtils.isNumberSchema(p)) {\n            if (p.getDefault() != null) {\n                return \"@\" + p.getDefault().toString();\n            }\n        } else if (ModelUtils.isIntegerSchema(p)) {\n            if (p.getDefault() != null) {\n                return \"@\" + p.getDefault().toString();\n            }\n        } else if (ModelUtils.isStringSchema(p)) {\n            if (p.getDefault() != null) {\n                return \"@\\\"\" + (String) p.getDefault() + \"\\\"\";\n            }\n        } else if (ModelUtils.isBooleanSchema(p)) {\n            if (p.getDefault() != null) {\n                if (p.getDefault().toString().equalsIgnoreCase(\"false\"))\n                    return \"@(NO)\";\n                else\n                    return \"@(YES)\";\n            }\n        }\n\n        return null;\n    }\n"
+  },
+  {
+    "id": "nickman_qreactor-4-Associations-FirstSentence",
+    "old_comment_raw": "Returns",
+    "new_comment_raw": "Indicates if the queue is buffered",
+    "old_code_raw": "\tpublic boolean isBuffered() {\n\t\treturn buffered;\n\t}\n",
+    "new_code_raw": "\tpublic boolean isBuffered() {\n\t\treturn queue.buffered();\n\t}\n\n"
+  },
+  {
+    "id": "mukteshkrmishra_javasimon-45-Associations-FirstSentence",
+    "old_comment_raw": "If given location is monitored, then a Stopwatch is started and Split returned - otherwise  null is returned.",
+    "new_comment_raw": "If given location is monitored, then a  Stopwatch is started and  Split returned - otherwise disabled Split is returned.",
+    "old_code_raw": "\tpublic Split start(L location) {\r\n\t\tif (stopwatchSource.isMonitored(location)) {\r\n\t\t\treturn stopwatchSource.getMonitor(location).start();\r\n\t\t} else {\r\n\t\t\treturn null;\r\n\t\t}\r\n\t}\r\n",
+    "new_code_raw": "\tpublic Split start(L location) {\r\n\t\tif (stopwatchSource.isMonitored(location)) {\r\n\t\t\treturn stopwatchSource.getMonitor(location).start();\r\n\t\t} else {\r\n\t\t\treturn Split.DISABLED;\r\n\t\t}\r\n\t}\r\n\n"
+  },
+  {
+    "id": "LawnchairLauncher_Lawnchair-421-FirstSentence-0",
+    "old_comment_raw": "Finds the upper-left coordinate of the first rectangle in the grid that can hold a cell of the specified dimensions.",
+    "new_comment_raw": "This method can be called only once! Calling #findVacantCellsFromOccupied will restore the ability to call this method.",
+    "old_code_raw": "        boolean findCellForSpan(int[] cellXY, int spanX, int spanY) {\n            // return the span represented by the CellInfo only there is no view there\n            //   (this.cell == null) and there is enough space\n\n            if (this.cell == null && this.spanX >= spanX && this.spanY >= spanY) {\n                if (cellXY != null) {\n                    cellXY[0] = cellX;\n                    cellXY[1] = cellY;\n                }\n                return true;\n            }\n\n            int startX = 0;\n            if (intersectX >= 0) {\n                startX = Math.max(startX, intersectX - (spanX - 1));\n            }\n            int endX = mCountX - (spanX - 1);\n            if (intersectX >= 0) {\n                endX = Math.min(endX, intersectX + (spanX - 1));\n            }\n            int startY = 0;\n            if (intersectY >= 0) {\n                startY = Math.max(startY, intersectY - (spanY - 1));\n            }\n            int endY = mCountY - (spanY - 1);\n            if (intersectY >= 0) {\n                endY = Math.min(endY, intersectY + (spanY - 1));\n            }\n\n            for (int x = startX; x < endX; x++) {\n                inner:\n                for (int y = startY; y < endY; y++) {\n                    for (int i = 0; i < spanX; i++) {\n                        for (int j = 0; j < spanY; j++) {\n                            if (mOccupied[x + i][y + j]) {\n                                // small optimization: we can skip to below the row we just found\n                                // an occupied cell\n                                y += j;\n                                continue inner;\n                            }\n                        }\n                    }\n                    if (cellXY != null) {\n                        cellXY[0] = x;\n                        cellXY[1] = y;\n                    }\n                    return true;\n                }\n            }\n            return false;\n        }\n",
+    "new_code_raw": "        boolean findCellForSpan(int[] cellXY, int spanX, int spanY) {\n            return findCellForSpan(cellXY, spanX, spanY, true);\n        }\n"
+  },
+  {
+    "id": "querydsl_querydsl-1437-FirstSentence-0",
+    "old_comment_raw": "Expr : left.startsWith(right) (ignore case)",
+    "new_comment_raw": "Expr : left.startsWith(right)",
+    "old_code_raw": "    public static EBoolean startsWith(Expr<String> left, Expr<String> right, boolean caseSensitive) {\n        if (caseSensitive){\n            return startsWith(left, right);            \n        }else{\n            return operationFactory.createBoolean(Ops.STARTSWITH_IC, left, right);\n        }\n    }\n",
+    "new_code_raw": "    public static EBoolean startsWith(Expr<String> left, Expr<String> right) {\n        return operationFactory.createBoolean(Ops.STARTSWITH, left, right);\n    }\n"
+  },
+  {
+    "id": "cemcatik_jtds-113-Associations-FirstSentence",
+    "old_comment_raw": "Construct a test suite for this library.",
+    "new_comment_raw": "Provides a null test suite so that JUnit will not try to instantiate this class directly.",
+    "old_code_raw": "        public static Test suite(String name) {\n            return new TestSuite(\n                    JtdsDataSourceUnitTest.Test_JtdsDataSource_getConnection.class, name);\n        }\n",
+    "new_code_raw": "        public static final Test suite() {\n            return null;\n        }\n\n"
+  },
+  {
+    "id": "magro_memcached-session-manager-11-Associations-FirstSentence",
+    "old_comment_raw": "Store the provided session in memcached.",
+    "new_comment_raw": "Store the provided session in memcached if the session was modified or if the session needs to be relocated.",
+    "old_code_raw": "    public BackupResult backupSession( final Session session ) {\n        if ( _log.isInfoEnabled() ) {\n            _log.debug( \"Trying to store session in memcached: \" + session.getId() );\n        }\n\n        final BackupSessionTask task = getOrCreateBackupSessionTask( (MemcachedBackupSession) session );\n        return task.backupSession();\n    }\n",
+    "new_code_raw": "    public BackupResultStatus backupSession( final Session session ) {\n        if ( _log.isInfoEnabled() ) {\n            _log.debug( \"Trying to store session in memcached: \" + session.getId() );\n        }\n\n        final MemcachedBackupSession backupSession = (MemcachedBackupSession) session;\n\n        final BackupSessionTask task = getOrCreateBackupSessionTask( backupSession );\n\n        final Map<String, Object> attributes = backupSession.getAttributesInternal();\n\n        final byte[] attributesData = _transcoderService.serializeAttributes( backupSession, attributes );\n        final int hashCode = Arrays.hashCode( attributesData );\n        if ( backupSession.getDataHashCode() != hashCode\n                || task.sessionCookieWasRelocated() ) {\n            final byte[] data = _transcoderService.serialize( backupSession, attributesData );\n\n            final BackupResult result = task.backupSession( data, attributesData );\n            if ( result.getAttributesData() != null ) {\n                backupSession.setDataHashCode( Arrays.hashCode( result.getAttributesData() ) );\n            }\n\n            return result.getStatus();\n        } else {\n            return BackupResultStatus.SKIPPED;\n        }\n    }\n\n"
+  },
+  {
+    "id": "apache_kylin-527-FirstSentence-0",
+    "old_comment_raw": "flatten to OR-AND filter, (A AND B AND ..) OR (C AND D AND ..) OR ..",
+    "new_comment_raw": "throws IllegalStateException when the flat children exceed the maxFlatChildrenSize",
+    "old_code_raw": "    public TupleFilter flatFilter() {\n        return flattenInternal(this);\n    }\n",
+    "new_code_raw": "    public TupleFilter flatFilter(int maxFlatChildrenSize) {\n        return flattenInternal(this, maxFlatChildrenSize);\n    }\n"
+  },
+  {
+    "id": "JodaOrg_joda_time-2128-FirstSentence-0",
+    "old_comment_raw": "Sets a value in the milliseconds supplied from a human-readable, text value.",
+    "new_comment_raw": "Sets a value using the specified partial instant.",
+    "old_code_raw": "    public long set(long instant, String text, Locale locale) {\n        try {\n            return set(instant, Integer.parseInt(text));\n        } catch (NumberFormatException ex) {\n            throw new IllegalArgumentException(\"Invalid \" + getName() + \" text: \" + text);\n        }\n    }\n",
+    "new_code_raw": "    public int[] set(PartialInstant instant, int fieldIndex, int[] values, int newValue) {\n        FieldUtils.verifyValueBounds(this, newValue, getMinimumValue(instant), getMaximumValue(instant));\n        values[fieldIndex] = newValue;\n        return values;\n    }\n"
+  },
+  {
+    "id": "OpenAPITools_openapi_generator-2514-FirstSentence-0",
+    "old_comment_raw": "Serialize the given Java object into request body string, according to the request Content-Type.",
+    "new_comment_raw": "Serialize the given Java object into request body according to the object's class and the request Content-Type.",
+    "old_code_raw": "  public String serialize(Object obj, String contentType) throws ApiException {\n    if (isJsonMime(contentType)) {\n      if (obj != null)\n        return json.serialize(obj);\n      else\n        return null;\n    } else {\n      throw new ApiException(\"Content type \\\"\" + contentType + \"\\\" is not supported\");\n    }\n  }\n",
+    "new_code_raw": "  public RequestBody serialize(Object obj, String contentType) throws ApiException {\n    if (obj instanceof byte[]) {\n      // Binary (byte array) body parameter support.\n      return RequestBody.create(MediaType.parse(contentType), (byte[]) obj);\n    } else if (obj instanceof File) {\n      // File body parameter support.\n      return RequestBody.create(MediaType.parse(contentType), (File) obj);\n    } else if (isJsonMime(contentType)) {\n      String content;\n      if (obj != null) {\n        content = json.serialize(obj);\n      } else {\n        content = null;\n      }\n      return RequestBody.create(MediaType.parse(contentType), content);\n    } else {\n      throw new ApiException(\"Content type \\\"\" + contentType + \"\\\" is not supported\");\n    }\n  }\n"
+  },
+  {
+    "id": "briancavalier_iterate-3-Associations-FirstSentence",
+    "old_comment_raw": "Applies  predicate to each item",
+    "new_comment_raw": "Applies  visitor to each item",
+    "old_code_raw": "    public <P extends Visitor<? super X>> P visit(P predicate)\n    {\n        for (X x : this) {\n            predicate.visit(x);\n        }\n\n        return predicate;\n    }\n",
+    "new_code_raw": "    public <V extends Visitor<? super X>> V visit(V visitor)\n    {\n        for (X x : this) {\n            visitor.visit(x);\n        }\n\n        return visitor;\n    }\n\n"
+  },
+  {
+    "id": "JodaOrg_joda_time-1018-FirstSentence-0",
+    "old_comment_raw": "Returns a formatter for a two digit hour of day, two digit minute of hour, two digit second of minute, and time zone offset prefixed by 'T' ('T'HH:mm:ssZZ).",
+    "new_comment_raw": "Returns a formatter for a two digit hour of day, two digit minute of hour, two digit second of minute, and time zone offset prefixed by 'T' ('T'HH:mm:ssZZ).",
+    "old_code_raw": "    public static DateTimeFormatter tTimeNoMillis() {\n        if (ttx == null) {\n            ttx = new DateTimeFormatterBuilder()\n                .append(literalTElement())\n                .append(timeNoMillis())\n                .toFormatter();\n        }\n        return ttx;\n    }\n",
+    "new_code_raw": "    public static DateTimeFormatter tTimeNoMillis() {\n        return Constants.ttx;\n    }\n"
+  },
+  {
+    "id": "MarkBennett_dart-13-Associations-FirstSentence",
+    "old_comment_raw": "Return the value of the source attribute if it exists.",
+    "new_comment_raw": "Return the first source attribute for the given tag node, or  null if it does not exist.",
+    "old_code_raw": "  private String getScriptSourcePath(XmlTagNode node) {\n    for (XmlAttributeNode attribute : node.getAttributes()) {\n      if (attribute.getName().getLexeme().equals(SRC)) {\n        String text = attribute.getText();\n        return text != null && text.length() > 0 ? text : null;\n      }\n    }\n    return null;\n  }\n",
+    "new_code_raw": "  private XmlAttributeNode getScriptSourcePath(XmlTagNode node) {\n    for (XmlAttributeNode attribute : node.getAttributes()) {\n      if (attribute.getName().getLexeme().equals(SRC)) {\n        return attribute;\n      }\n    }\n    return null;\n  }\n\n"
+  },
+  {
+    "id": "google_certificate-transparency-java-3-Associations-FirstSentence",
+    "old_comment_raw": "Parses a  Ct.MerkleTreeLeaf from binary encoding.",
+    "new_comment_raw": "Parses a  MerkleTreeLeaf from binary encoding.",
+    "old_code_raw": "  public static Ct.MerkleTreeLeaf parseMerkleTreeLeaf(InputStream in) {\n    Ct.MerkleTreeLeaf.Builder merkleTreeLeafBuilder = Ct.MerkleTreeLeaf.newBuilder();\n\n    int version = (int) readNumber(in, CTConstants.VERSION_LENGTH);\n    if (version != Ct.Version.V1.getNumber()) {\n      throw new SerializationException(String.format(\"Unknown version: %d\", version));\n    }\n    merkleTreeLeafBuilder.setVersion(Ct.Version.valueOf(version));\n\n    int leafType = (int) readNumber(in, 1);\n    if (leafType != Ct.MerkleLeafType.TIMESTAMPED_ENTRY_VALUE) {\n      throw new SerializationException(String.format(\"Unknown entry type: %d\", leafType));\n    }\n    merkleTreeLeafBuilder.setType(Ct.MerkleLeafType.valueOf(leafType));\n    merkleTreeLeafBuilder.setTimestampedEntry((parseTimestampedEntry(in)));\n\n    return merkleTreeLeafBuilder.build();\n  }\n",
+    "new_code_raw": "  public static MerkleTreeLeaf parseMerkleTreeLeaf(InputStream in) {\n    int version = (int) readNumber(in, CTConstants.VERSION_LENGTH);\n    if (version != Ct.Version.V1.getNumber()) {\n      throw new SerializationException(String.format(\"Unknown version: %d\", version));\n    }\n\n    int leafType = (int) readNumber(in, 1);\n    if (leafType != Ct.MerkleLeafType.TIMESTAMPED_ENTRY_VALUE) {\n      throw new SerializationException(String.format(\"Unknown entry type: %d\", leafType));\n    }\n\n    return new MerkleTreeLeaf(Ct.Version.valueOf(version), Ct.MerkleLeafType.valueOf(leafType), parseTimestampedEntry(in));\n  }\n\n"
+  },
+  {
+    "id": "MarkBennett_dart-31-Associations-FirstSentence",
+    "old_comment_raw": "Return the key with which the value will be associated.",
+    "new_comment_raw": "Return the expression computing the key with which the value will be associated.",
+    "old_code_raw": "  public StringLiteral getKey() {\n    return key;\n  }\n",
+    "new_code_raw": "  public Expression getKey() {\n    return key;\n  }\n\n"
+  },
+  {
+    "id": "kevinsawicki_http-request-12-Associations-FirstSentence",
+    "old_comment_raw": "Append given parameters to base URL",
+    "new_comment_raw": "Append given query parameters to base URL",
+    "old_code_raw": "\t@SuppressWarnings(\"unchecked\")\n\tpublic static String append(String url, final Map<String, ?> params) {\n\t\tif (params == null || params.isEmpty())\n\t\t\treturn url;\n\n\t\tStringBuilder result = new StringBuilder();\n\t\tif (!url.endsWith(\"/\"))\n\t\t\turl += \"/\";\n\n\t\tEntry<String, ?> entry;\n\t\tObject value;\n\t\tIterator<?> iterator = params.entrySet().iterator();\n\t\tentry = (Entry<String, ?>) iterator.next();\n\t\tresult.append(entry.getKey());\n\t\tresult.append('=');\n\t\tvalue = entry.getValue();\n\t\tif (value != null)\n\t\t\tresult.append(value);\n\n\t\twhile (iterator.hasNext()) {\n\t\t\tresult.append('&');\n\t\t\tentry = (Entry<String, ?>) iterator.next();\n\t\t\tresult.append(entry.getKey());\n\t\t\tresult.append('=');\n\t\t\tvalue = entry.getValue();\n\t\t\tif (value != null)\n\t\t\t\tresult.append(value);\n\t\t}\n\n\t\treturn url + '?' + result.toString();\n\t}\n",
+    "new_code_raw": "\t@SuppressWarnings(\"unchecked\")\n\tpublic static String append(final String url, final Map<String, ?> params) {\n\t\tif (params == null || params.isEmpty())\n\t\t\treturn url;\n\n\t\tfinal StringBuilder result = new StringBuilder(url);\n\n\t\t// Add trailing slash if the base URL doesn't have any path segments.\n\t\t// The following test is checking for the last slash not being part of\n\t\t// the protocol to host separator '://'.\n\t\tint firstColon = url.indexOf(':');\n\t\tint lastSlash = url.lastIndexOf('/');\n\t\tif (firstColon + 2 == lastSlash)\n\t\t\tresult.append('/');\n\t\tresult.append('?');\n\n\t\tEntry<String, ?> entry;\n\t\tObject value;\n\t\tIterator<?> iterator = params.entrySet().iterator();\n\t\tentry = (Entry<String, ?>) iterator.next();\n\t\tresult.append(entry.getKey());\n\t\tresult.append('=');\n\t\tvalue = entry.getValue();\n\t\tif (value != null)\n\t\t\tresult.append(value);\n\n\t\twhile (iterator.hasNext()) {\n\t\t\tresult.append('&');\n\t\t\tentry = (Entry<String, ?>) iterator.next();\n\t\t\tresult.append(entry.getKey());\n\t\t\tresult.append('=');\n\t\t\tvalue = entry.getValue();\n\t\t\tif (value != null)\n\t\t\t\tresult.append(value);\n\t\t}\n\n\t\treturn result.toString();\n\t}\n\n"
+  },
+  {
+    "id": "zaproxy_zaproxy-2217-FirstSentence-0",
+    "old_comment_raw": "Tells whether or not this site has any parameters (cookies, query or form parameters).",
+    "new_comment_raw": "Tells whether or not this site has any parameters (cookies, query, form parameters, or response header fields).",
+    "old_code_raw": "\tpublic boolean hasParams() {\n\t\treturn !cookieParams.isEmpty() || !urlParams.isEmpty() || !formParams.isEmpty();\n\t}\n",
+    "new_code_raw": "\tpublic boolean hasParams() {\n\t\treturn !cookieParams.isEmpty() || !urlParams.isEmpty() || !formParams.isEmpty() || !headerParams.isEmpty();\n\t}\n"
+  }
+]

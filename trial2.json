@@ -1,0 +1,16 @@
+[
+  {
+    "id": "debezium_debezium-26-FirstSentence-0",
+    "old_comment_raw": "Obtain an editor for the identified table or, if there is no such table, create an editor with the specified ID.",
+    "new_comment_raw": "Obtain an editor for the table with the given ID.",
+    "old_code_raw": "    public TableEditor editOrCreateTable(String catalogName, String schemaName, String tableName) {\n        return editOrCreateTable(new TableId(catalogName, schemaName, tableName));\n    }\n",
+    "new_code_raw": "    public TableEditor editOrCreateTable(TableId tableId) {\n        Table table = forTable(tableId);\n        return table == null ? Table.editor().tableId(tableId) : table.edit();\n    }\n"
+  },
+  {
+    "id": "debezium_debezium-1300-FirstSentence-0",
+    "old_comment_raw": "Get the number of nanoseconds past midnight of the given  java.time.LocalDateTime,  java.time.LocalDate,  java.time.LocalTime,  java.util.Date,  java.sql.Date,  java.sql.Time, or  java.sql.Timestamp, ignoring any date portions of the supplied value.",
+    "new_comment_raw": "Get the number of nanoseconds past midnight of the given  Duration.",
+    "old_code_raw": "    public static long toNanoOfDay(Object value, TemporalAdjuster adjuster) {\n        LocalTime time = Conversions.toLocalTime(value);\n        if (adjuster !=null) {\n            time = time.with(adjuster);\n        }\n        return time.toNanoOfDay();\n    }\n",
+    "new_code_raw": "    public static long toNanoOfDay(Object value, boolean acceptLargeValues) {\n        if (value instanceof Duration) {\n            Duration duration = (Duration) value;\n            if (!acceptLargeValues && (duration.isNegative() || duration.compareTo(ONE_DAY) > 0)) {\n                throw new IllegalArgumentException(\"Time values must be between 00:00:00 and 24:00:00 (inclusive): \" + duration);\n            }\n\n            return ((Duration) value).toNanos();\n        }\n\n        // TODO only needed for SQL Server/Oracle, where we don't produce Duration right away;\n        // this should go eventually, as the conversion to LocalTime is superfluous\n        LocalTime time = Conversions.toLocalTime(value);\n        return time.toNanoOfDay();\n    }\n"
+  }
+]
